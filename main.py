@@ -1,15 +1,23 @@
-from fastapi import FastAPI, File, UploadFile
-from processador import processar_gabarito
-import shutil
+from fastapi import FastAPI, UploadFile, File
+from fastapi.responses import JSONResponse
+import cv2
+import numpy as np
 
 app = FastAPI()
-#atualizei pelo git. é um teste
 
-@app.post("/corrigir/")
-async def corrigir_prova(file: UploadFile = File(...)):
-    file_location = f"temp/{file.filename}"
-    with open(file_location, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+@app.post("/corrigir")
+async def corrigir(imagem: UploadFile = File(...)):
+    # Lê a imagem
+    conteudo = await imagem.read()
+    nparr = np.frombuffer(conteudo, np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    resultado = processar_gabarito(file_location)
-    return {"respostas": resultado}
+    # Aqui vai a lógica do OpenCV para detectar marcações
+
+    resultado = {
+        "01": "B",
+        "02": "C",
+        "03": "A"
+    }
+
+    return JSONResponse(content=resultado)

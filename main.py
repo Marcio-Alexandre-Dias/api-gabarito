@@ -2,10 +2,8 @@ from fastapi import FastAPI, File, UploadFile
 from processador import processar_gabarito
 import shutil
 
-
-
 app = FastAPI()
-
+#atualizei pelo git. é um teste
 
 @app.post("/corrigir/")
 async def corrigir_prova(file: UploadFile = File(...)):
